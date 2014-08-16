@@ -3,9 +3,11 @@ import base64
 import os
 import re
 
+from os.path import expanduser
+home = expanduser("~")
 
 # costanti :)
-REMMINA_FOLDER = '.remmina/'
+REMMINA_FOLDER = home+'/'+'.remmina/'
 REMMINA_PREF   = 'remmina.pref'
 
 REGEXP_ACCOUNTS = r'[0-9]{13}\.remmina'
