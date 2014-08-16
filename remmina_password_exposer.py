@@ -34,9 +34,10 @@ for f in os.listdir(REMMINA_FOLDER):
         for i in fo:
             if re.findall(r'password=', i):
                 r_password = i[len(r'password='):][:-1]
-            if re.findall(r'name=', i):
+            if re.findall(r'^name=', i):
                 r_name = i.split('=')[1][:-1]
-
+            if re.findall(r'username=', i):
+                r_username = i.split('=')[1][:-1]
         #~ print fo
         #~ print 'found', f
         
@@ -44,6 +45,6 @@ for f in os.listdir(REMMINA_FOLDER):
         secret = base64.decodestring(r_secret)
         
         diz[r_name] = DES3.new(secret[:24], DES3.MODE_CBC, secret[24:]).decrypt(password)
-        print r_name, diz[r_name]
+        print r_name, r_username, diz[r_name]
         
 
