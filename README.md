@@ -1,7 +1,7 @@
 remmina_password_exposer
 ========================
 
-Utility used to decrypt remmina account passwords
+Utility used to decrypt remmina password accounts
 
 python remmina_password_exposer.py
 
