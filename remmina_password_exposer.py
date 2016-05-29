@@ -11,7 +11,7 @@ home = expanduser("~")
 REMMINA_FOLDER = os.getenv('REMMINA_FOLDER', home+'/'+'.remmina/')
 REMMINA_PREF   = 'remmina.pref'
 
-REGEXP_ACCOUNTS = r'[0-9]{13}\.remmina'
+REGEXP_ACCOUNTS = r'[0-9]{13}\.remmina(.swp)?'
 REGEXP_PREF     = r'remmina.pref'
 
 diz = {}
