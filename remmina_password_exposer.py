@@ -33,7 +33,7 @@ for f in os.listdir(REMMINA_FOLDER):
         o.close()
         
         for i in fo:
-            if re.findall(r'password=', i):
+            if re.findall(r'^password=', i):
                 r_password = i[len(r'password='):][:-1]
             if re.findall(r'^name=', i):
                 r_name = i.split('=')[1][:-1]
