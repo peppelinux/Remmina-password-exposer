@@ -1,51 +1,62 @@
 #!/usr/bin/python
-from Crypto.Cipher import DES3
+# 2018 Giuseppe De Marco <giuseppe.demarco@unical.it>
 import base64
 import os
 import re
+import sys
 
-from os.path import expanduser
-home = expanduser("~")
+try:
+    from Crypto.Cipher import DES3
+except Exception as e:
+    print(e)
+    print('pip3 install --upgrade pycrypto')
+    sys.exit(1)
 
-# costanti :)
-REMMINA_FOLDER = os.getenv('REMMINA_FOLDER', home+'/'+'.remmina/')
+# ENV
+HOME = os.path.expanduser("~")
+CHARSET = 'utf-8'
+REMMINA_FOLDER = os.getenv('REMMINA_FOLDER', HOME+'/'+'.remmina/')
 REMMINA_PREF   = 'remmina.pref'
-
 REGEXP_ACCOUNTS = r'[0-9]{13}\.remmina(.swp)?'
 REGEXP_PREF     = r'remmina.pref'
 
-diz = {}
-
-fs = open(REMMINA_FOLDER+REMMINA_PREF)
-fso = fs.readlines()
-fs.close()
-
-for i in fso:
-    if re.findall(r'secret=', i):
-        r_secret = i[len(r'secret='):][:-1]
-        print 'found secret', r_secret
+def show_remmina_accounts(debug=False):
+    diz = {}
+    res = []
+    fs = open(REMMINA_FOLDER+REMMINA_PREF)
+    fso = fs.readlines()
+    fs.close()
     
-for f in os.listdir(REMMINA_FOLDER):
-    if re.findall(REGEXP_ACCOUNTS, f): 
+    for i in fso:
+        if re.findall(r'secret=', i):
+            r_secret = i[len(r'secret='):][:-1]
+            if debug: print('**secret found {}'.format(r_secret))
         
-        o = open( REMMINA_FOLDER+f, 'r')
-        fo = o.readlines()
-        o.close()
-        
-        for i in fo:
-            if re.findall(r'^password=', i):
-                r_password = i[len(r'password='):][:-1]
-            if re.findall(r'^name=', i):
-                r_name = i.split('=')[1][:-1]
-            if re.findall(r'username=', i):
-                r_username = i.split('=')[1][:-1]
-        #~ print fo
-        #~ print 'found', f
-        
-        password = base64.decodestring(r_password)
-        secret = base64.decodestring(r_secret)
-        
-        diz[r_name] = DES3.new(secret[:24], DES3.MODE_CBC, secret[24:]).decrypt(password)
-        print r_name, r_username, diz[r_name]
-        
+    for f in os.listdir(REMMINA_FOLDER):
+        if re.findall(REGEXP_ACCOUNTS, f): 
+            fo = open( REMMINA_FOLDER+f, 'r')
+            for i in fo.readlines():
+                if re.findall(r'^password=', i):
+                    r_password = i[len(r'password='):][:-1]
+                if re.findall(r'^name=', i):
+                    r_name = i.split('=')[1][:-1]
+                if re.findall(r'username=', i):
+                    r_username = i.split('=')[1][:-1]
+            if debug: print(fo, 'found', f)
 
+            password = base64.b64decode(r_password)
+            secret = base64.b64decode(r_secret)
+            
+            diz[r_name] = DES3.new(secret[:24], DES3.MODE_CBC, secret[24:]).decrypt(password)
+            if sys.version_info.major == 3:
+                pval = diz[r_name].decode(CHARSET)
+            else:
+                pval = diz[r_name]
+            r = (r_name, r_username, pval, diz[r_name])
+            res.append(r)
+            print('{} {} {} [raw:{}]'.format(*r))
+            fo.close()
+    return res
+    
+if __name__ == '__main__':
+    show_remmina_accounts()
