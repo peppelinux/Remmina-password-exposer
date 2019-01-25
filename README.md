@@ -1,4 +1,4 @@
-remmina_password_exposer
+Remmina password exposer
 ========================
 
 Utility used to decrypt remmina password accounts
