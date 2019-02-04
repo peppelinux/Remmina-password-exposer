@@ -16,7 +16,8 @@ setup(name='remmina-password-exposer',
       author='Giuseppe De Marco',
       author_email='giuseppe.demarco@unical.it',
       license='BSD',
-      packages=['remmina-password-exposer'],
+      scripts=['remmina_password_exposer/remmina_password_exposer.py'],
+      packages=['remmina_password_exposer'],
       install_requires=[
                       'pycrypto'
                   ],
