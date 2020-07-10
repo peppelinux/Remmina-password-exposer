@@ -15,15 +15,19 @@ except Exception as e:
 # ENV
 HOME = os.path.expanduser("~")
 CHARSET = 'utf-8'
+
 REMMINA_FOLDER = os.getenv('REMMINA_FOLDER', HOME+'/'+'.remmina/')
-REMMINA_PREF   = 'remmina.pref'
-REGEXP_ACCOUNTS = r'[0-9]{13}\.remmina(.swp)?'
-REGEXP_PREF     = r'remmina.pref'
+if REMMINA_FOLDER[-1] != '/':
+    REMMINA_FOLDER = REMMINA_FOLDER+'/'
+
+REMMINA_PREF   = os.getenv('REMMINA_PREF', REMMINA_FOLDER+'remmina.pref')
+REGEXP_ACCOUNTS = r'([^.]+)\.remmina(.swp)?'
+DEBUG = os.getenv('DEBUG', '')
 
 def show_remmina_accounts(debug=False):
     diz = {}
     res = []
-    fs = open(REMMINA_FOLDER+REMMINA_PREF)
+    fs = open(REMMINA_PREF)
     fso = fs.readlines()
     fs.close()
     
@@ -59,4 +63,4 @@ def show_remmina_accounts(debug=False):
     return res
     
 if __name__ == '__main__':
-    show_remmina_accounts()
+    show_remmina_accounts(bool(DEBUG))
